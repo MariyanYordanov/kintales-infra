@@ -1,0 +1,96 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "panels": [
+    {
+      "title": "Container CPU Usage",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "rate(container_cpu_usage_seconds_total{name=~\".+\", name!~\".*POD.*\"}[5m]) * 100",
+          "legendFormat": "{{ name }}"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "percent" } }
+    },
+    {
+      "title": "Container Memory Usage",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "targets": [
+        {
+          "expr": "container_memory_usage_bytes{name=~\".+\", name!~\".*POD.*\"}",
+          "legendFormat": "{{ name }}"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "bytes" } }
+    },
+    {
+      "title": "Container Restarts",
+      "type": "stat",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "targets": [
+        {
+          "expr": "container_start_time_seconds{name=~\"kintales.*\"}",
+          "legendFormat": "{{ name }}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "dateTimeFromNow",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "title": "Container Network I/O",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "targets": [
+        {
+          "expr": "rate(container_network_receive_bytes_total{name=~\".+\", name!~\".*POD.*\"}[5m])",
+          "legendFormat": "{{ name }} rx"
+        },
+        {
+          "expr": "-rate(container_network_transmit_bytes_total{name=~\".+\", name!~\".*POD.*\"}[5m])",
+          "legendFormat": "{{ name }} tx"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "Bps" } }
+    },
+    {
+      "title": "Container Count",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 8, "x": 0, "y": 16 },
+      "targets": [
+        {
+          "expr": "count(container_last_seen{name=~\".+\", name!~\".*POD.*\"})",
+          "legendFormat": "Running"
+        }
+      ]
+    },
+    {
+      "title": "Docker Disk Usage",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 8, "x": 8, "y": 16 },
+      "targets": [
+        {
+          "expr": "container_fs_usage_bytes{name=~\".+\", name!~\".*POD.*\"}",
+          "legendFormat": "{{ name }}"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "bytes" } }
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": ["kintales", "docker"],
+  "time": { "from": "now-1h", "to": "now" },
+  "title": "Docker Metrics",
+  "uid": "kintales-docker-metrics"
+}

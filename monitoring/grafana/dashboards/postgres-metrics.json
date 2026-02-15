@@ -1,0 +1,124 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "panels": [
+    {
+      "title": "Active Connections",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "pg_stat_database_numbackends{datname=\"kintales\"}",
+          "legendFormat": "Active"
+        },
+        {
+          "expr": "pg_settings_max_connections",
+          "legendFormat": "Max"
+        }
+      ]
+    },
+    {
+      "title": "Transactions/sec",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "targets": [
+        {
+          "expr": "rate(pg_stat_database_xact_commit{datname=\"kintales\"}[5m])",
+          "legendFormat": "Commits/s"
+        },
+        {
+          "expr": "rate(pg_stat_database_xact_rollback{datname=\"kintales\"}[5m])",
+          "legendFormat": "Rollbacks/s"
+        }
+      ]
+    },
+    {
+      "title": "Cache Hit Ratio",
+      "type": "gauge",
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 8 },
+      "targets": [
+        {
+          "expr": "pg_stat_database_blks_hit{datname=\"kintales\"} / (pg_stat_database_blks_hit{datname=\"kintales\"} + pg_stat_database_blks_read{datname=\"kintales\"}) * 100",
+          "legendFormat": "Hit %"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "yellow", "value": 95 },
+              { "color": "green", "value": 99 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "title": "Database Size",
+      "type": "stat",
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 8 },
+      "targets": [
+        {
+          "expr": "pg_database_size_bytes{datname=\"kintales\"}",
+          "legendFormat": "kintales"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "bytes" } }
+    },
+    {
+      "title": "Locks",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 8 },
+      "targets": [
+        {
+          "expr": "pg_locks_count{datname=\"kintales\"}",
+          "legendFormat": "{{ mode }}"
+        }
+      ]
+    },
+    {
+      "title": "Temp Bytes",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
+      "targets": [
+        {
+          "expr": "rate(pg_stat_database_temp_bytes{datname=\"kintales\"}[5m])",
+          "legendFormat": "Temp bytes/s"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "Bps" } }
+    },
+    {
+      "title": "Deadlocks",
+      "type": "stat",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
+      "targets": [
+        {
+          "expr": "pg_stat_database_deadlocks{datname=\"kintales\"}",
+          "legendFormat": "Total"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "red", "value": 1 }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": ["kintales", "postgres"],
+  "time": { "from": "now-1h", "to": "now" },
+  "title": "PostgreSQL Metrics",
+  "uid": "kintales-postgres-metrics"
+}

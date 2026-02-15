@@ -1,0 +1,48 @@
+# Postfix configuration template for KinTales
+# Replace variables before use: ${MAIL_DOMAIN}, ${SERVER_HOSTNAME}
+#
+# To use: sed -e 's/${MAIL_DOMAIN}/kintales.net/g' \
+#              -e 's/${SERVER_HOSTNAME}/mail.kintales.net/g' \
+#              main.cf.template > main.cf
+
+# Basic settings
+smtpd_banner = $myhostname ESMTP
+biff = no
+append_dot_mydomain = no
+readme_directory = no
+
+# TLS parameters
+smtpd_tls_cert_file = /etc/letsencrypt/live/${MAIL_DOMAIN}/fullchain.pem
+smtpd_tls_key_file = /etc/letsencrypt/live/${MAIL_DOMAIN}/privkey.pem
+smtpd_tls_security_level = may
+smtp_tls_CApath = /etc/ssl/certs
+smtp_tls_security_level = may
+smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
+
+# General settings
+myhostname = ${SERVER_HOSTNAME}
+mydomain = ${MAIL_DOMAIN}
+myorigin = $mydomain
+alias_maps = hash:/etc/aliases
+alias_database = hash:/etc/aliases
+mydestination = localhost
+mynetworks = 127.0.0.0/8 172.0.0.0/8
+mailbox_size_limit = 0
+recipient_delimiter = +
+inet_interfaces = all
+inet_protocols = all
+
+# DKIM (OpenDKIM milter)
+milter_default_action = accept
+milter_protocol = 6
+smtpd_milters = inet:localhost:8891
+non_smtpd_milters = $smtpd_milters
+
+# Relay restrictions
+smtpd_relay_restrictions = permit_mynetworks, reject_unauth_destination
+
+# Message size limit (10MB)
+message_size_limit = 10240000
+
+# Send-only (no local delivery)
+local_transport = error:local delivery is disabled

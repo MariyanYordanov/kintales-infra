@@ -1,0 +1,28 @@
+# Environment variables (contains secrets)
+.env
+.env.local
+.env.production
+
+# Encryption keys
+*.pem
+*.key
+*.p12
+*.jks
+backup-passphrase.txt
+
+# Generated DKIM keys
+postfix/opendkim/keys/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
